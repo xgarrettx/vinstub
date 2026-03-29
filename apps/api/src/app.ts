@@ -135,12 +135,5 @@ export async function buildApp(): Promise<FastifyInstance> {
   });
 
   return app;
-  const app = fastify({
-  logger: true,
-  trustProxy: true
-});
-app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
-  done(null, body);
-});
 }
 
