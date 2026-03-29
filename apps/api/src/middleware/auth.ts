@@ -26,8 +26,8 @@ import {
   setAuthCache,
   type AuthCacheEntry,
 } from '../redis/index.js';
-import type { UserContext } from 'shared';
-import { API_KEY_REGEX } from 'shared';
+import type { UserContext } from '@vinstub/shared';
+import { API_KEY_REGEX } from '@vinstub/shared';
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 

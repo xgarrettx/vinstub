@@ -19,7 +19,10 @@ const INTERNAL_TAGS = new Set([
   'Admin',
 ]);
 
-export async function registerOpenApi(app: FastifyInstance): Promise<void> {
+
+import type { FastifyInstance } from 'fastify';
+
+export async function registerOpenApi(app: FastifyInstance) {
   await app.register(swagger, {
     // Hide internal routes from the generated OpenAPI spec.
     // The transform runs before shouldRouteHide(), so returning hide:true

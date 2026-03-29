@@ -1,12 +1,15 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "../..",
+    "baseUrl": ".",
     "paths": {
-      "shared": ["../../packages/shared/src/index.ts"]
+      "@vinstub/shared": ["../../packages/shared/src/index.ts"],
+      "@vinstub/shared/*": ["../../packages/shared/src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "../../packages/shared/src/**/*.ts"
+  ]
 }
