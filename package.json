@@ -8,6 +8,7 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
+    "start": "node apps/api/dist/server.js"
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
