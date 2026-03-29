@@ -24,15 +24,6 @@ import stripeWebhookRoutes from './routes/webhooks/stripe.js';
 import adminRoutes from './routes/admin/index.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
-  const app = fastify({
-    logger: true,
-    trustProxy: true
-  });
-
-  await registerOpenApi(app);
-
-  return app;
-}
   // ── Sentry ─────────────────────────────────────────────────────────────────
   if (env.SENTRY_DSN) {
     Sentry.init({
@@ -51,8 +42,6 @@ export async function buildApp(): Promise<FastifyInstance> {
         transport: { target: 'pino-pretty', options: { colorize: true } },
       }),
     },
-    // Raw body needed for Stripe webhook signature verification
-   // addContentTypeParser: false as never, // handled per-route for /webhooks/stripe
     trustProxy: true, // DigitalOcean App Platform sits behind a load balancer
     requestIdHeader: 'x-request-id',
     requestIdLogLabel: 'request_id',
@@ -136,4 +125,3 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   return app;
 }
-
