@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# Environment — NEVER commit real .env files
+.env
+.env.local
+.env.production
+.env.staging
+
+# Turborepo
+.turbo/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/settings.json
+*.swp
+
+# Ingest staging artifacts
+scripts/ingest/*.csv
+scripts/ingest/staging/
+
+# Test coverage
+coverage/
+.env
+**/.env
+.env
+.env.*
+
+.env
+.env.*
+!.env.example
+**/.env

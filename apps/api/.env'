@@ -1,0 +1,53 @@
+# ─── DATABASE ───────────────────────────────────────────────────────────────
+# DigitalOcean Managed Postgres connection string
+DATABASE_URL=postgresql://user:password@host:25060/vinstub?sslmode=require
+
+# ─── REDIS ──────────────────────────────────────────────────────────────────
+# DigitalOcean Managed Redis (TLS required in production)
+REDIS_URL=rediss://default:password@host:25061
+
+# ─── AUTH ───────────────────────────────────────────────────────────────────
+# Generate with: openssl rand -hex 32
+JWT_SECRET=replace_with_32_byte_hex_string
+REFRESH_SECRET=replace_with_different_32_byte_hex_string
+
+# JWT expiry (seconds)
+JWT_ACCESS_EXPIRY=900
+JWT_REFRESH_EXPIRY=604800
+
+# ─── STRIPE ─────────────────────────────────────────────────────────────────
+STRIPE_SECRET_KEY=sk_test_51TFaIr5pKltjHHntQripoTxO4C3Z9LgBY13jZyz8r1zJ8y0jY1RN2KZqKOmwMlvkKnsQpgGIIgPb1lAzvIJSONFw00e92vRY4N
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_BASIC=7.99
+STRIPE_PRICE_PREMIUM=19.99
+STRIPE_PRICE_ENTERPRISE=99.99
+
+# ─── RESEND (EMAIL) ──────────────────────────────────────────────────────────
+RESEND_API_KEY=re_UVpJNCou_LKwdtNzy53yhLF78yQHVu2F4
+RESEND_FROM_ADDRESS=noreply@vinstub.com
+RESEND_FROM_NAME=VINSTUB.com
+
+# ─── SENTRY ─────────────────────────────────────────────────────────────────
+SENTRY_DSN=https://...@o....ingest.sentry.io/...
+
+# ─── APP ────────────────────────────────────────────────────────────────────
+NODE_ENV=development
+PORT=8080
+# Base URL used for Stripe redirect URLs (no trailing slash)
+APP_BASE_URL=http://localhost:3000
+
+# ─── ADMIN ──────────────────────────────────────────────────────────────────
+# Static shared secret — first factor for /admin/* routes
+# Generate with: openssl rand -hex 32
+ADMIN_API_KEY=e1392e6bbe45e7f8309f080003a2a676a35dc28732666d2e9f3a5f408112f55d
+# Base32-encoded TOTP seed — second factor for /admin/* routes
+# Generate with: node -e "const {authenticator}=require('otplib'); console.log(authenticator.generateSecret())"
+# Then scan the otpauth:// URI into your authenticator app
+ADMIN_TOTP_SECRET=NON5BV2TAQYMMC7W7XMUCCQRLS6RCUJ5
+
+# ─── RATE LIMITING OVERRIDES (optional — defaults in constants.ts) ───────────
+# Leave unset to use defaults from shared/constants.ts
+# RATE_LIMIT_FREE_DAILY=50
+# RATE_LIMIT_BASIC_DAILY=500
+# RATE_LIMIT_PREMIUM_DAILY=5000
+# RATE_LIMIT_ENTERPRISE_DAILY=50000
