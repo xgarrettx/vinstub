@@ -118,7 +118,7 @@ export async function register(
       accountStatus: 'pending_verification',
       plan: 'free',
       billingStatus: 'none',
-    })
+    } as any)
     .returning({ id: users.id });
 
   if (!user) throw new Error('Failed to create user');

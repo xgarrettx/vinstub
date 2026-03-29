@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
-    "rootDir": "../..",
-    "baseUrl": ".",
-    "paths": {
-      "@vinstub/shared": ["../../packages/shared/src/index.ts"],
-      "@vinstub/shared/*": ["../../packages/shared/src/*"]
-    },
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "rootDir": "src",
+    "outDir": "dist",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "sourceMap": true
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "../../packages/shared/src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

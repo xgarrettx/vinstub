@@ -6,14 +6,16 @@
  *  - Error handling is centralized
  *  - Tests can mock a single module
  */
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { env } from '../config/env.js';
 
 // ─── CLIENT ───────────────────────────────────────────────────────────────────
 
-let _client: Redis | null = null;
+type RedisClient = InstanceType<typeof Redis>;
 
-export function getRedis(): Redis {
+let _client: RedisClient | null = null;
+
+export function getRedis(): RedisClient {
   if (!_client) {
     _client = new Redis(env.REDIS_URL, {
       maxRetriesPerRequest: 3,
@@ -43,7 +45,7 @@ export async function closeRedis(): Promise<void> {
  * this module doesn't immediately open a Redis connection (useful for scripts
  * and tests that may not need Redis).
  */
-export const redis: Redis = new Proxy({} as Redis, {
+export const redis: RedisClient = new Proxy({} as RedisClient, {
   get(_target, prop: string | symbol) {
     return Reflect.get(getRedis(), prop as string);
   },
