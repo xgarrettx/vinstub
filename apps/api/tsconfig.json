@@ -5,7 +5,10 @@
     "paths": {
       "@vinstub/shared": ["../../packages/shared/src/index.ts"],
       "@vinstub/shared/*": ["../../packages/shared/src/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true
   },
   "include": [
     "src/**/*.ts",

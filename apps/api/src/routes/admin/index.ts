@@ -114,13 +114,13 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     const since = new Date();
     since.setDate(since.getDate() - 30);
     const usageRows = await db
-      .select({ date: apiUsageDaily.usageDate, count: apiUsageDaily.requestCount })
+      .select({ date: apiUsageDaily.date, count: apiUsageDaily.queryCount })
       .from(apiUsageDaily)
       .where(and(
         eq(apiUsageDaily.userId, id),
-        gte(apiUsageDaily.usageDate, since.toISOString().slice(0, 10)),
+        gte(apiUsageDaily.date, since.toISOString().slice(0, 10)),
       ))
-      .orderBy(desc(apiUsageDaily.usageDate));
+      .orderBy(desc(apiUsageDaily.date));
 
     const totalLast30 = usageRows.reduce((s, r) => s + r.count, 0);
 
@@ -152,7 +152,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
 
     const result = await db
       .update(users)
-      .set({ plan })
+      .set({ plan } as any)
       .where(eq(users.id, id))
       .returning({ id: users.id });
 
@@ -178,7 +178,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
 
     const result = await db
       .update(users)
-      .set({ accountStatus: 'suspended', suspendedAt: new Date() })
+      .set({ accountStatus: 'suspended' as any, suspendedAt: new Date() } as any)
       .where(eq(users.id, id))
       .returning({ id: users.id });
 
@@ -204,11 +204,11 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     const result = await db
       .update(users)
       .set({
-        accountStatus: 'active',
+        accountStatus: 'active' as any,
         suspendedAt: null,
         paymentFailedAt: null,
-        billingStatus: 'active',
-      })
+        billingStatus: 'active' as any,
+      } as any)
       .where(eq(users.id, id))
       .returning({ id: users.id });
 
@@ -254,9 +254,9 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     // Total requests today
     const today = new Date().toISOString().slice(0, 10);
     const [todayUsage] = await db
-      .select({ total: sql<number>`COALESCE(SUM(request_count), 0)` })
+      .select({ total: sql<number>`COALESCE(SUM(query_count), 0)` })
       .from(apiUsageDaily)
-      .where(eq(apiUsageDaily.usageDate, today));
+      .where(eq(apiUsageDaily.date, today));
 
     return reply.status(200).send({
       success: true,

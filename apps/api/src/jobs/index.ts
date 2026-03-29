@@ -56,7 +56,7 @@ export function startJobs(): void {
 
 export function stopJobs(): void {
   for (const task of tasks) {
-    task.destroy();
+    (task as any).destroy();
   }
   tasks = [];
   console.log('[jobs] all background jobs stopped');

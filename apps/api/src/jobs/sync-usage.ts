@@ -37,7 +37,7 @@ export async function runSyncUsage(): Promise<void> {
     const results = await pipeline.exec();
 
     // Build upsert rows
-    type UsageRow = { userId: string; usageDate: string; requestCount: number };
+    type UsageRow = { userId: string; date: string; queryCount: number };
     const rows: UsageRow[] = [];
 
     for (let i = 0; i < keys.length; i++) {
@@ -45,30 +45,29 @@ export async function runSyncUsage(): Promise<void> {
       const match = KEY_REGEX.exec(key);
       if (!match) continue;
 
-      const [, userId, usageDate] = match;
+      const [, userId, dateStr] = match;
       const rawCount = results?.[i]?.[1];
-      if (!rawCount || !userId || !usageDate) continue;
+      if (!rawCount || !userId || !dateStr) continue;
 
-      const requestCount = parseInt(rawCount as string, 10);
-      if (isNaN(requestCount) || requestCount <= 0) continue;
+      const queryCount = parseInt(rawCount as string, 10);
+      if (isNaN(queryCount) || queryCount <= 0) continue;
 
-      rows.push({ userId, usageDate, requestCount });
+      rows.push({ userId, date: dateStr, queryCount });
     }
 
     if (rows.length === 0) continue;
 
-    // Upsert: INSERT ... ON CONFLICT (user_id, usage_date) DO UPDATE SET request_count = GREATEST(...)
+    // Upsert: INSERT ... ON CONFLICT (user_id, date) DO UPDATE SET query_count = GREATEST(...)
     // GREATEST() ensures we never write a lower count than what's already in the DB
     // (protects against a race where the Redis counter was reset between reads).
     await db
       .insert(apiUsageDaily)
       .values(rows)
       .onConflictDoUpdate({
-        target: [apiUsageDaily.userId, apiUsageDaily.usageDate],
+        target: [apiUsageDaily.userId, apiUsageDaily.date],
         set: {
-          requestCount: sql`GREATEST(excluded.request_count, api_usage_daily.request_count)`,
-          updatedAt: new Date(),
-        },
+          queryCount: sql`GREATEST(excluded.query_count, api_usage_daily.query_count)` as any,
+        } as any,
       });
 
     totalSynced += rows.length;

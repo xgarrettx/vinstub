@@ -67,7 +67,7 @@ export async function runPaymentReminders(): Promise<void> {
         await sendEmail(
           window.eventType,
           account.email,
-          { hoursRemaining, gracePeriodHours: SUSPENSION_GRACE_HOURS },
+          { hoursRemaining: String(hoursRemaining), gracePeriodHours: String(SUSPENSION_GRACE_HOURS) },
           true, // deduplicate
         );
       } catch (err) {

@@ -19,15 +19,12 @@ const INTERNAL_TAGS = new Set([
   'Admin',
 ]);
 
-
-import type { FastifyInstance } from 'fastify';
-
 export async function registerOpenApi(app: FastifyInstance) {
   await app.register(swagger, {
     // Hide internal routes from the generated OpenAPI spec.
     // The transform runs before shouldRouteHide(), so returning hide:true
     // here is equivalent to adding { schema: { hide: true } } to each route.
-    transform({ schema, url }: { schema: Record<string, unknown>; url: string }) {
+    transform({ schema, url }: { schema: any; url: string }) {
       const tags = (schema?.tags as string[] | undefined) ?? [];
       if (tags.some((t) => INTERNAL_TAGS.has(t))) {
         return { schema: { ...schema, hide: true }, url };

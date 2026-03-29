@@ -51,7 +51,7 @@ export async function runSuspendAccounts(): Promise<void> {
       // 1. Mark as suspended
       await db
         .update(users)
-        .set({ accountStatus: 'suspended', suspendedAt: now })
+        .set({ accountStatus: 'suspended' as any, suspendedAt: now } as any)
         .where(eq(users.id, account.id));
 
       // 2. Invalidate all API key cache entries for this user

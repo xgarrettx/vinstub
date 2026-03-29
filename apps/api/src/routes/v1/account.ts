@@ -220,15 +220,6 @@ const accountRoutes: FastifyPluginAsync = async (fastify) => {
     const user = request.user!;
     const result = await rotateApiKey(user.userId);
 
-    if ('code' in result) {
-      return reply.status(500).send({
-        success: false,
-        error: result.code,
-        message: result.message,
-        request_id: request.id,
-      });
-    }
-
     return reply.status(200).send({
       success: true,
       message: 'API key rotated. Save your new key — it will not be shown again.',
@@ -263,16 +254,7 @@ const accountRoutes: FastifyPluginAsync = async (fastify) => {
     },
   }, async (request, reply) => {
     const user = request.user!;
-    const result = await revokeApiKey(user.userId);
-
-    if (result && 'code' in result) {
-      return reply.status(404).send({
-        success: false,
-        error: result.code,
-        message: result.message,
-        request_id: request.id,
-      });
-    }
+    await revokeApiKey(user.userId);
 
     return reply.status(200).send({
       success: true,
@@ -398,17 +380,17 @@ const accountRoutes: FastifyPluginAsync = async (fastify) => {
 
     const rows = await db
       .select({
-        date: apiUsageDaily.usageDate,
-        requestCount: apiUsageDaily.requestCount,
+        date: apiUsageDaily.date,
+        requestCount: apiUsageDaily.queryCount,
       })
       .from(apiUsageDaily)
       .where(
         and(
           eq(apiUsageDaily.userId, user.userId),
-          gte(apiUsageDaily.usageDate, since.toISOString().slice(0, 10)),
+          gte(apiUsageDaily.date, since.toISOString().slice(0, 10)),
         ),
       )
-      .orderBy(desc(apiUsageDaily.usageDate));
+      .orderBy(desc(apiUsageDaily.date));
 
     const totalRequests = rows.reduce((sum, r) => sum + r.requestCount, 0);
 

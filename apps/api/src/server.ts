@@ -12,9 +12,9 @@ async function start() {
 
   try {
     await app.listen({ port: env.PORT, host: '0.0.0.0' });
-    app.log.info(`API listening on port ${env.PORT} [${env.NODE_ENV}]`);
+    (app.log as any).info(`API listening on port ${env.PORT} [${env.NODE_ENV}]`);
   } catch (err) {
-    app.log.error(err);
+    (app.log as any).error(err);
     process.exit(1);
   }
 
@@ -23,7 +23,7 @@ async function start() {
 
   // ── Graceful shutdown ───────────────────────────────────────────────────────
   const shutdown = async (signal: string) => {
-    app.log.info(`Received ${signal} — shutting down gracefully`);
+    (app.log as any).info(`Received ${signal} — shutting down gracefully`);
     stopJobs();
     await app.close();
     await closeRedis();

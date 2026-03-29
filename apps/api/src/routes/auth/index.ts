@@ -397,7 +397,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
     // Fire-and-forget — always respond the same way
     requestPasswordReset(email).catch((err) =>
-      fastify.log.error({ err }, '[auth] forgot-password failed'),
+      (fastify.log as any).error({ err }, '[auth] forgot-password failed'),
     );
 
     return reply.status(200).send({

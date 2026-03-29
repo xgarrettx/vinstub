@@ -114,11 +114,11 @@ export async function handleCheckoutCompleted(
       plan,
       stripeCustomerId: customerId,
       stripeSubscriptionId: subscriptionId,
-      billingStatus: 'active',
+      billingStatus: 'active' as any,
       paymentFailedAt: null,
       suspendedAt: null,
-      accountStatus: 'active',
-    })
+      accountStatus: 'active' as any,
+    } as any)
     .where(eq(users.id, userId));
 
   await invalidateUserCacheByUserId(userId);
@@ -151,11 +151,11 @@ export async function handleInvoicePaymentSucceeded(
   await db
     .update(users)
     .set({
-      billingStatus: 'active',
+      billingStatus: 'active' as any,
       paymentFailedAt: null,
       suspendedAt: null,
-      accountStatus: 'active',
-    })
+      accountStatus: 'active' as any,
+    } as any)
     .where(eq(users.id, user.id));
 
   await invalidateUserCacheByUserId(user.id);
@@ -195,14 +195,14 @@ export async function handleInvoicePaymentFailed(
   await db
     .update(users)
     .set({
-      billingStatus: 'payment_failed',
+      billingStatus: 'payment_failed' as any,
       paymentFailedAt: user.paymentFailedAt ?? now,
-    })
+    } as any)
     .where(eq(users.id, user.id));
 
   await invalidateUserCacheByUserId(user.id);
 
-  await sendEmail('payment_failed', user.email, { gracePeriodHours: 72 }, true).catch(() => {});
+  await sendEmail('payment_failed', user.email, { gracePeriodHours: String(72) }, true).catch(() => {});
 }
 
 /**
@@ -236,7 +236,7 @@ export async function handleSubscriptionUpdated(
 
   await db
     .update(users)
-    .set({ plan: newPlan })
+    .set({ plan: newPlan } as any)
     .where(eq(users.id, rows[0]!.id));
 
   await invalidateUserCacheByUserId(rows[0]!.id);
@@ -271,11 +271,11 @@ export async function handleSubscriptionDeleted(
     .set({
       plan: 'free',
       stripeSubscriptionId: null,
-      billingStatus: 'active',
+      billingStatus: 'active' as any,
       paymentFailedAt: null,
       suspendedAt: null,
-      accountStatus: 'active',
-    })
+      accountStatus: 'active' as any,
+    } as any)
     .where(eq(users.id, user.id));
 
   await invalidateUserCacheByUserId(user.id);

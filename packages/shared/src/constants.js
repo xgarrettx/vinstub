@@ -1,4 +1,7 @@
-export const PLAN_LIMITS = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AUTH_CACHE_TTL_SECONDS = exports.MAX_SIGNUPS_PER_IP_PER_HOUR = exports.SUSPENSION_DELETION_DAYS = exports.PAYMENT_REMINDER_2_HOURS = exports.PAYMENT_REMINDER_1_HOURS = exports.PAYMENT_GRACE_PERIOD_HOURS = exports.API_KEY_REGEX = exports.API_KEY_TOTAL_LENGTH = exports.API_KEY_BODY_LENGTH = exports.API_KEY_PREFIX = exports.PLAN_PRICING = exports.PLAN_LIMITS = void 0;
+exports.PLAN_LIMITS = {
     free: {
         daily: 50,
         perHour: 30,
@@ -14,43 +17,42 @@ export const PLAN_LIMITS = {
         softDailyCap: true,
     },
     premium: {
-        daily: 5_000,
-        perHour: 2_000,
+        daily: 5000,
+        perHour: 2000,
         perMinute: 100,
         concurrency: 10,
         softDailyCap: true,
     },
     enterprise: {
-        daily: 50_000,
-        perHour: 15_000,
+        daily: 50000,
+        perHour: 15000,
         perMinute: 500,
         concurrency: 25,
         softDailyCap: true,
     },
 };
-export const PLAN_PRICING = {
+exports.PLAN_PRICING = {
     free: { cents: 0, display: '$0' },
     basic: { cents: 799, display: '$7.99' },
     premium: { cents: 1999, display: '$19.99' },
     enterprise: { cents: 9900, display: '$99.00' },
 };
 // ─── API KEY FORMAT ───────────────────────────────────────────────────────────
-export const API_KEY_PREFIX = 'vs_live_';
-export const API_KEY_BODY_LENGTH = 48; // hex chars (24 random bytes)
-export const API_KEY_TOTAL_LENGTH = API_KEY_PREFIX.length + API_KEY_BODY_LENGTH;
-export const API_KEY_REGEX = /^vs_live_[0-9a-f]{48}$/;
+exports.API_KEY_PREFIX = 'vs_live_';
+exports.API_KEY_BODY_LENGTH = 48; // hex chars (24 random bytes)
+exports.API_KEY_TOTAL_LENGTH = exports.API_KEY_PREFIX.length + exports.API_KEY_BODY_LENGTH;
+exports.API_KEY_REGEX = /^vs_live_[0-9a-f]{48}$/;
 // ─── SUSPENSION POLICY ────────────────────────────────────────────────────────
 /** Hours of grace period after payment failure before account is suspended */
-export const PAYMENT_GRACE_PERIOD_HOURS = 72;
+exports.PAYMENT_GRACE_PERIOD_HOURS = 72;
 /** Hours after payment failure to send first reminder */
-export const PAYMENT_REMINDER_1_HOURS = 24;
+exports.PAYMENT_REMINDER_1_HOURS = 24;
 /** Hours after payment failure to send second (final) reminder */
-export const PAYMENT_REMINDER_2_HOURS = 48;
+exports.PAYMENT_REMINDER_2_HOURS = 48;
 /** Days after suspension before account is marked for deletion */
-export const SUSPENSION_DELETION_DAYS = 30;
+exports.SUSPENSION_DELETION_DAYS = 30;
 // ─── MISC ─────────────────────────────────────────────────────────────────────
 /** Max accounts per IP per hour at signup */
-export const MAX_SIGNUPS_PER_IP_PER_HOUR = 3;
+exports.MAX_SIGNUPS_PER_IP_PER_HOUR = 3;
 /** Redis key cache TTL for auth validation (seconds) */
-export const AUTH_CACHE_TTL_SECONDS = 60;
-//# sourceMappingURL=constants.js.map
+exports.AUTH_CACHE_TTL_SECONDS = 60;

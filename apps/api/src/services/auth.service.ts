@@ -37,7 +37,7 @@ import {
   API_KEY_PREFIX,
   API_KEY_BODY_LENGTH,
   MAX_SIGNUPS_PER_IP_PER_HOUR,
-} from 'shared';
+} from '@vinstub/shared';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
@@ -164,7 +164,7 @@ export async function resendVerificationEmail(
     .set({
       emailVerificationToken: verificationToken,
       emailVerificationTokenExpiresAt: tokenExpiresAt,
-    })
+    } as any)
     .where(eq(users.id, user.id));
 
   sendEmail('verify_email', email.toLowerCase(), {
@@ -226,11 +226,11 @@ export async function verifyEmail(
       .update(users)
       .set({
         emailVerified: true,
-        accountStatus: 'active',
+        accountStatus: 'active' as any,
         emailVerificationToken: null,
         emailVerificationTokenExpiresAt: null,
         updatedAt: new Date(),
-      })
+      } as any)
       .where(eq(users.id, user.id));
 
     await tx.insert(apiKeys).values({
@@ -238,7 +238,7 @@ export async function verifyEmail(
       keyHash,
       keyPrefix,
       isActive: true,
-    });
+    } as any);
   });
 
   // 4. Send welcome email
@@ -401,7 +401,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
       passwordResetToken: token,
       passwordResetTokenExpiresAt: expiresAt,
       updatedAt: new Date(),
-    })
+    } as any)
     .where(eq(users.id, rows[0]!.id));
 
   sendEmail('password_reset', email, { token })
@@ -448,7 +448,7 @@ export async function resetPassword(
       passwordResetToken: null,
       passwordResetTokenExpiresAt: null,
       updatedAt: new Date(),
-    })
+    } as any)
     .where(eq(users.id, user.id));
 }
 
@@ -479,7 +479,7 @@ export async function rotateApiKey(userId: string): Promise<KeyResult> {
     // Deactivate existing key(s) for this user
     await tx
       .update(apiKeys)
-      .set({ isActive: false, rotatedAt: new Date() })
+      .set({ isActive: false, rotatedAt: new Date() } as any)
       .where(and(eq(apiKeys.userId, userId), eq(apiKeys.isActive, true)));
 
     // Insert new key
@@ -488,7 +488,7 @@ export async function rotateApiKey(userId: string): Promise<KeyResult> {
       keyHash,
       keyPrefix,
       isActive: true,
-    });
+    } as any);
   });
 
   // Evict old key from Redis cache (within 60s it would expire anyway,
@@ -513,7 +513,7 @@ export async function revokeApiKey(userId: string): Promise<void> {
 
   await db
     .update(apiKeys)
-    .set({ isActive: false, rotatedAt: new Date() })
+    .set({ isActive: false, rotatedAt: new Date() } as any)
     .where(and(eq(apiKeys.userId, userId), eq(apiKeys.isActive, true)));
 
   if (existingRows.length > 0) {
@@ -540,7 +540,7 @@ export async function generateApiKey(userId: string): Promise<KeyResult> {
   const keyHash = hashApiKey(rawApiKey);
   const keyPrefix = rawApiKey.slice(0, 16);
 
-  await db.insert(apiKeys).values({ userId, keyHash, keyPrefix, isActive: true });
+  await db.insert(apiKeys).values({ userId, keyHash, keyPrefix, isActive: true } as any);
 
   return { rawApiKey, keyPrefix };
 }

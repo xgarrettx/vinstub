@@ -53,7 +53,7 @@ async function logEmail(
     eventType,
     resendId: resendId ?? null,
     status: 'sent',
-  });
+  } as any);
 }
 
 // ─── TEMPLATE BUILDERS ────────────────────────────────────────────────────────

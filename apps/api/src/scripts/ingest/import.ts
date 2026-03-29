@@ -89,12 +89,12 @@ async function upsertBatch(rows: ReturnType<typeof normalizeRow>[]): Promise<num
         stubLength: sql`EXCLUDED.stub_length`,
         make: sql`EXCLUDED.make`,
         model: sql`EXCLUDED.model`,
-        submodel: sql`EXCLUDED.submodel`,
+        submodel: sql`EXCLUDED.submodel` as any,
         isBaseModel: sql`EXCLUDED.is_base_model`,
         sourceVersion: sql`EXCLUDED.source_version`,
         isActive: true,
         updatedAt: new Date(),
-      },
+      } as any,
     });
 
   return rows.length;
@@ -267,7 +267,7 @@ async function main(): Promise<void> {
   if (sourceVersion) {
     const staleResult = await db
       .update(vinStubs)
-      .set({ isActive: false, updatedAt: new Date() })
+      .set({ isActive: false, updatedAt: new Date() } as any)
       .where(and(eq(vinStubs.isActive, true), ne(vinStubs.sourceVersion, sourceVersion)));
 
     console.log(`[ingest] deactivated stale rows from previous versions`);

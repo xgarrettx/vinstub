@@ -71,7 +71,7 @@ const stripeWebhookRoutes: FastifyPluginAsync = async (fastify) => {
         env.STRIPE_WEBHOOK_SECRET,
       );
     } catch (err) {
-      fastify.log.warn({ err }, '[stripe-webhook] signature verification failed');
+      (fastify.log as any).warn({ err }, '[stripe-webhook] signature verification failed');
       return reply.status(400).send({
         error: `Webhook signature verification failed: ${(err as Error).message}`,
       });
@@ -85,11 +85,11 @@ const stripeWebhookRoutes: FastifyPluginAsync = async (fastify) => {
         stripeEventId: event.id,
         eventType: event.type,
         processedAt: new Date(),
-      });
+      } as any);
     } catch (err: any) {
       // Unique violation = duplicate event
       if (err?.code === '23505') {
-        fastify.log.info({ eventId: event.id }, '[stripe-webhook] duplicate event — skipping');
+        (fastify.log as any).info({ eventId: event.id }, '[stripe-webhook] duplicate event — skipping');
         return reply.status(200).send({ received: true });
       }
       throw err;
@@ -119,12 +119,12 @@ const stripeWebhookRoutes: FastifyPluginAsync = async (fastify) => {
           break;
 
         default:
-          fastify.log.debug({ type: event.type }, '[stripe-webhook] unhandled event type — acknowledged');
+          (fastify.log as any).debug({ type: event.type }, '[stripe-webhook] unhandled event type — acknowledged');
       }
     } catch (err) {
       // Log the error but return 200 to Stripe to prevent retries for
       // application-level errors. Sentry will capture this for alerting.
-      fastify.log.error({ err, eventId: event.id, eventType: event.type },
+      (fastify.log as any).error({ err, eventId: event.id, eventType: event.type },
         '[stripe-webhook] handler threw — event acknowledged but processing failed');
     }
 

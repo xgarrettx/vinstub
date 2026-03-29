@@ -36,6 +36,7 @@ export const billingStatusEnum = pgEnum('billing_status_type', [
   'active',
   'past_due',
   'cancelled',
+  'payment_failed',
 ]);
 
 // ─── TABLE ────────────────────────────────────────────────────────────────────

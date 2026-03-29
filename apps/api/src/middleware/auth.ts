@@ -96,7 +96,7 @@ export async function validateApiKey(rawKey: string): Promise<UserContext | null
   // 6. Update last_used_at asynchronously (don't block the request)
   setImmediate(() => {
     db.update(apiKeys)
-      .set({ lastUsedAt: new Date() })
+      .set({ lastUsedAt: new Date() } as any)
       .where(eq(apiKeys.keyHash, keyHash))
       .catch((err) => console.error('[auth] failed to update last_used_at:', err));
   });
