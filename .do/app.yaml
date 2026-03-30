@@ -90,8 +90,8 @@ services:
       deploy_on_push: true
     source_dir: /
     environment_slug: node-js
-    build_command: pnpm install --frozen-lockfile && pnpm --filter @vinstub/shared build && pnpm --filter @vinstub/web build
-    run_command: pnpm run --filter @vinstub/web start
+    build_command: pnpm install --frozen-lockfile && pnpm --filter @vinstub/shared build && pnpm --filter @vinstub/web build && cp -r apps/web/.next/static apps/web/.next/standalone/.next/static
+    run_command: node apps/web/.next/standalone/server.js
     http_port: 3000
     instance_count: 1
     instance_size_slug: basic-xxs
