@@ -1,0 +1,111 @@
+name: vinstub
+region: nyc
+
+services:
+  # ─── API (Fastify) ───────────────────────────────────────────────────────────
+  - name: api
+    github:
+      repo: xgarrettx/vinstub
+      branch: main
+      deploy_on_push: true
+    source_dir: /
+    environment_slug: node-js
+    build_command: pnpm install --frozen-lockfile && npx turbo run build --filter=@vinstub/api
+    run_command: node apps/api/dist/server.js
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    health_check:
+      http_path: /v1/health
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_AND_BUILD_TIME
+      - key: PORT
+        value: "8080"
+        scope: RUN_TIME
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: REDIS_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: REFRESH_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_ACCESS_EXPIRY
+        value: "900"
+        scope: RUN_TIME
+      - key: JWT_REFRESH_EXPIRY
+        value: "604800"
+        scope: RUN_TIME
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_PRICE_BASIC
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_PRICE_PREMIUM
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_PRICE_ENTERPRISE
+        scope: RUN_TIME
+        type: SECRET
+      - key: RESEND_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: RESEND_FROM_ADDRESS
+        scope: RUN_TIME
+        type: SECRET
+      - key: RESEND_FROM_NAME
+        scope: RUN_TIME
+        type: SECRET
+      - key: APP_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: APP_BASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: ADMIN_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: ADMIN_TOTP_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: SENTRY_DSN
+        scope: RUN_TIME
+        type: SECRET
+
+  # ─── Web (Next.js) ───────────────────────────────────────────────────────────
+  - name: web
+    github:
+      repo: xgarrettx/vinstub
+      branch: main
+      deploy_on_push: true
+    source_dir: /
+    environment_slug: node-js
+    build_command: pnpm install --frozen-lockfile && npx turbo run build --filter=@vinstub/web
+    run_command: node apps/web/.next/standalone/server.js
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_AND_BUILD_TIME
+      - key: PORT
+        value: "3000"
+        scope: RUN_TIME
+      - key: NEXT_PUBLIC_API_URL
+        scope: BUILD_TIME
+        type: SECRET
