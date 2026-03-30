@@ -1,20 +1,19 @@
-name: vinstub
+name: vinstub-api
 region: nyc
 
-# Explicit ingress: only the web service handles public / traffic.
-# The api service is reachable via its own service URL and through
-# the web service's Next.js rewrites (/auth/*, /v1/*, /webhooks/*).
+# Web service handles all public traffic at /
+# API is accessed via its own service URL and through Next.js rewrites
 ingress:
   rules:
-    - component:
-        name: web
-      match:
-        path:
-          prefix: /
+  - component:
+      name: vinstub
+    match:
+      path:
+        prefix: /
 
 services:
   # ─── API (Fastify) ───────────────────────────────────────────────────────────
-  - name: api
+  - name: vinstub-api
     github:
       repo: xgarrettx/vinstub
       branch: main
@@ -24,8 +23,8 @@ services:
     build_command: pnpm install --frozen-lockfile && pnpm --filter @vinstub/shared build && pnpm --filter @vinstub/api build
     run_command: node apps/api/dist/server.js
     http_port: 8080
-    instance_count: 1
-    instance_size_slug: basic-xxs
+    instance_count: 2
+    instance_size_slug: apps-s-1vcpu-1gb
     health_check:
       http_path: /v1/health
     envs:
@@ -94,7 +93,7 @@ services:
         type: SECRET
 
   # ─── Web (Next.js) ───────────────────────────────────────────────────────────
-  - name: web
+  - name: vinstub
     dockerfile_path: apps/web/Dockerfile
     github:
       repo: xgarrettx/vinstub
@@ -103,7 +102,7 @@ services:
     source_dir: /
     http_port: 3000
     instance_count: 1
-    instance_size_slug: basic-xxs
+    instance_size_slug: apps-s-1vcpu-1gb-fixed
     envs:
       - key: NEXT_PUBLIC_API_URL
         scope: BUILD_TIME
