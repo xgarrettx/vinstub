@@ -1,6 +1,17 @@
 name: vinstub
 region: nyc
 
+# Explicit ingress: only the web service handles public / traffic.
+# The api service is reachable via its own service URL and through
+# the web service's Next.js rewrites (/auth/*, /v1/*, /webhooks/*).
+ingress:
+  rules:
+    - component:
+        name: web
+      match:
+        path:
+          prefix: /
+
 services:
   # ─── API (Fastify) ───────────────────────────────────────────────────────────
   - name: api
