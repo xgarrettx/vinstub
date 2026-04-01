@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Settings, LogOut, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,11 +22,10 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="fixed inset-y-0 left-0 z-40 flex w-60 flex-col border-r border-slate-200 bg-white">
         {/* Logo */}
-        <div className="flex h-16 items-center gap-2.5 border-b border-slate-200 px-5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
-            <span className="font-display text-xs font-bold">VS</span>
-          </div>
-          <span className="font-display text-base font-semibold text-slate-900">VINSTUB</span>
+        <div className="flex h-16 items-center border-b border-slate-200 px-5">
+          <Link href="/">
+            <Image src="/logo.png" alt="VINstub" width={120} height={39} priority />
+          </Link>
         </div>
 
         {/* Nav */}

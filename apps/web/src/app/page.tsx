@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Check, Zap, Shield, BarChart3, ArrowRight, Code2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -80,11 +81,8 @@ export default function HomePage() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
-              <span className="font-display text-xs font-bold">VS</span>
-            </div>
-            <span className="font-display text-lg font-semibold text-slate-900">VINSTUB</span>
+          <div className="flex items-center">
+            <Image src="/logo.png" alt="VINstub" width={160} height={52} priority />
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login">
