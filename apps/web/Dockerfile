@@ -32,6 +32,8 @@ ENV HOSTNAME=0.0.0.0
 COPY --from=builder /app/apps/web/.next/standalone ./
 # Copy static assets to the path server.js expects (relative to bundle root)
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+# Copy public folder (images, fonts, etc.) — required separately in standalone mode
+COPY --from=builder /app/apps/web/public ./apps/web/public
 
 EXPOSE 3000
 
