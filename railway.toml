@@ -1,0 +1,18 @@
+# ============================================================================
+# VINSTUB — Railway Deployment Config
+# ============================================================================
+# This project deploys 3 services from one monorepo:
+#   1. api    — Fastify REST API  (port 8080)
+#   2. web    — Next.js frontend  (port 3000)
+#   3. worker — Background cron jobs (no port)
+#
+# Each service uses its own Dockerfile (apps/<service>/Dockerfile).
+# Postgres and Redis are added as Railway plugins — not defined here.
+# ============================================================================
+
+[build]
+builder = "DOCKERFILE"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
