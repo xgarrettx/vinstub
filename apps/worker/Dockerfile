@@ -20,36 +20,35 @@ COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
 RUN pnpm install --no-frozen-lockfile
 
-# ── Build shared + api (jobs) + worker ─────────────────────────────────────
+# ── Build shared + api (the worker imports api source directly) ────────────
 FROM deps AS builder
 WORKDIR /app
 COPY packages/shared/ ./packages/shared/
 COPY apps/api/ ./apps/api/
 COPY apps/worker/ ./apps/worker/
 COPY turbo.json ./
-# Worker imports from api's jobs — build both
 RUN pnpm --filter @vinstub/shared build
-RUN pnpm --filter @vinstub/api build
-RUN pnpm --filter worker build
 
-# ── Minimal runtime image ──────────────────────────────────────────────────
+# ── Runtime image — runs worker source via tsx ─────────────────────────────
+# The worker imports from ../../api/src/ (TypeScript source, not dist),
+# so we run it with tsx instead of compiling separately.
 FROM node:22-alpine AS runner
 RUN npm install -g pnpm@9.0.0
 WORKDIR /app
 
-ENV NODE_ENV=production
-
-# Re-install prod-only deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* ./
+# Install ALL deps (tsx is a devDependency)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* tsconfig.base.json ./
 COPY apps/worker/package.json ./apps/worker/
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
-RUN pnpm install --no-frozen-lockfile --prod
+RUN NODE_ENV=development pnpm install --no-frozen-lockfile
 
-# Copy built output
-COPY --from=builder /app/apps/worker/dist ./apps/worker/dist
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
+ENV NODE_ENV=production
+
+# Copy source (worker runs from TypeScript via tsx)
+COPY --from=builder /app/packages/shared/ ./packages/shared/
+COPY --from=builder /app/apps/api/ ./apps/api/
+COPY --from=builder /app/apps/worker/ ./apps/worker/
 
 # No port — worker is a cron process, not a web server
-CMD ["node", "apps/worker/dist/index.js"]
+CMD ["npx", "tsx", "apps/worker/src/index.ts"]

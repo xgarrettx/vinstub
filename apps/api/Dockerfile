@@ -30,14 +30,16 @@ FROM node:22-alpine AS runner
 RUN npm install -g pnpm@9.0.0
 WORKDIR /app
 
-ENV NODE_ENV=production
 ENV PORT=8080
 
-# Re-install ALL deps (tsx + drizzle-kit needed at runtime for db:migrate)
+# Install ALL deps including devDeps (tsx + drizzle-kit needed for db:migrate)
+# NODE_ENV must NOT be "production" during install or pnpm skips devDependencies
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* tsconfig.base.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
-RUN pnpm install --no-frozen-lockfile
+RUN NODE_ENV=development pnpm install --no-frozen-lockfile
+
+ENV NODE_ENV=production
 
 # Copy built output
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
