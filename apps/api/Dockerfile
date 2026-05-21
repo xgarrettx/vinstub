@@ -33,18 +33,19 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Re-install prod-only deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* ./
+# Re-install ALL deps (tsx + drizzle-kit needed at runtime for db:migrate)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* tsconfig.base.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
-RUN pnpm install --no-frozen-lockfile --prod
+RUN pnpm install --no-frozen-lockfile
 
 # Copy built output
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 
-# Copy drizzle migrations (needed at runtime for db:migrate)
+# Copy drizzle migrations + config (needed at runtime for db:migrate)
 COPY --from=builder /app/apps/api/src/db/migrations ./apps/api/src/db/migrations
+COPY --from=builder /app/apps/api/drizzle.config.ts ./apps/api/
 
 EXPOSE 8080
 
