@@ -14,14 +14,12 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* tsconfig.base.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/email-templates/package.json ./packages/email-templates/
 RUN pnpm install --no-frozen-lockfile
 
 # ── Build shared + api ─────────────────────────────────────────────────────
 FROM deps AS builder
 WORKDIR /app
 COPY packages/shared/ ./packages/shared/
-COPY packages/email-templates/ ./packages/email-templates/
 COPY apps/api/ ./apps/api/
 COPY turbo.json ./
 RUN pnpm --filter @vinstub/shared build
@@ -39,13 +37,11 @@ ENV PORT=8080
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc* ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/email-templates/package.json ./packages/email-templates/
 RUN pnpm install --no-frozen-lockfile --prod
 
 # Copy built output
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
-COPY --from=builder /app/packages/email-templates/dist ./packages/email-templates/dist
 
 # Copy drizzle migrations (needed at runtime for db:migrate)
 COPY --from=builder /app/apps/api/src/db/migrations ./apps/api/src/db/migrations
