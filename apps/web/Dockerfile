@@ -12,6 +12,12 @@ RUN pnpm install --no-frozen-lockfile
 # ── Build shared + web ───────────────────────────────────────────────────────
 FROM deps AS builder
 WORKDIR /app
+
+# NEXT_PUBLIC_API_URL must be available at build time because next.config.ts
+# bakes the rewrite destinations into the standalone bundle.
+ARG NEXT_PUBLIC_API_URL=https://api.vinstub.com
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 COPY packages/shared/ ./packages/shared/
 COPY apps/web/ ./apps/web/
 # Build shared first so web can import from @vinstub/shared
