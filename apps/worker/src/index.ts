@@ -11,9 +11,9 @@
 import cron from 'node-cron';
 import * as Sentry from '@sentry/node';
 import { env } from '../../api/src/config/env.js';
-import { runSuspensionJob } from '../../api/src/jobs/suspension.job.js';
-import { runRemindersJob } from '../../api/src/jobs/reminders.job.js';
-import { runUsageSyncJob } from '../../api/src/jobs/usage-sync.job.js';
+import { runSuspendAccounts } from '../../api/src/jobs/suspend-accounts.js';
+import { runPaymentReminders } from '../../api/src/jobs/payment-reminders.js';
+import { runSyncUsage } from '../../api/src/jobs/sync-usage.js';
 
 if (env.SENTRY_DSN) {
   Sentry.init({ dsn: env.SENTRY_DSN, environment: env.NODE_ENV });
@@ -24,8 +24,7 @@ console.log(`[worker] Starting — NODE_ENV=${env.NODE_ENV}`);
 // ── Usage sync: Redis day counters → Postgres (every 60 seconds) ─────────────
 cron.schedule('* * * * *', async () => {
   try {
-    const { synced } = await runUsageSyncJob();
-    if (synced > 0) console.log(`[usage-sync] synced ${synced} records`);
+    await runSyncUsage();
   } catch (err) {
     Sentry.captureException(err);
     console.error('[usage-sync] error:', err);
@@ -35,8 +34,7 @@ cron.schedule('* * * * *', async () => {
 // ── Payment reminders: T+24h and T+48h emails (every hour) ───────────────────
 cron.schedule('0 * * * *', async () => {
   try {
-    const result = await runRemindersJob();
-    console.log(`[reminders] sent: T+24h=${result.sent24h} T+48h=${result.sent48h}`);
+    await runPaymentReminders();
   } catch (err) {
     Sentry.captureException(err);
     console.error('[reminders] error:', err);
@@ -46,8 +44,7 @@ cron.schedule('0 * * * *', async () => {
 // ── Account suspension: past T+72h grace period (every 15 minutes) ───────────
 cron.schedule('*/15 * * * *', async () => {
   try {
-    const { suspended } = await runSuspensionJob();
-    if (suspended > 0) console.log(`[suspension] suspended ${suspended} accounts`);
+    await runSuspendAccounts();
   } catch (err) {
     Sentry.captureException(err);
     console.error('[suspension] error:', err);
